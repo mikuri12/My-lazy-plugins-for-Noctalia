@@ -113,7 +113,13 @@ show_menu() {
     echo -e "  ${GREEN}3)${NC} Ambos plugins"
     echo -e "  ${RED}4)${NC} Cancelar"
     echo ""
-    read -p "Selecciona una opción [1-4]: " choice
+    
+    # Leer desde /dev/tty para que funcione con curl | bash
+    if [ -t 0 ]; then
+        read -p "Selecciona una opción [1-4]: " choice
+    else
+        read -p "Selecciona una opción [1-4]: " choice </dev/tty
+    fi
     
     case $choice in
         1)
@@ -154,16 +160,8 @@ fi
 
 print_success "Git está instalado"
 
-# Mostrar menú solo si no estamos en modo no-interactivo
-if [ -t 0 ]; then
-    show_menu
-else
-    # Modo no-interactivo (cuando se ejecuta con curl | bash)
-    INSTALL_MEDIA_PANEL=true
-    INSTALL_ANIMATED_WALLPAPER=true
-    print_info "Modo no-interactivo: instalando ambos plugins"
-    echo ""
-fi
+# Mostrar menú (funciona tanto en ejecución directa como con curl)
+show_menu
 
 # Crear directorios si no existen
 print_status "Verificando directorios de Noctalia..."
@@ -248,4 +246,7 @@ echo -e "⚙️  Configuración actualizada: ${YELLOW}$PLUGINS_JSON${NC}"
 echo ""
 echo -e "${YELLOW}⚠️  IMPORTANTE:${NC} Reinicia Noctalia Shell para aplicar los cambios"
 echo ""
+echo -e "Para reiniciar Noctalia Shell:"
+echo -e "  • ${CYAN}Alt + F2${NC} → Escribe: ${GREEN}noctalia --replace${NC}"
+echo -e "  • O cierra sesión y vuelve a iniciar"
 echo ""
