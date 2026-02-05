@@ -245,5 +245,4 @@ echo -e "📁 Plugins instalados en: ${YELLOW}$NOCTALIA_PLUGINS_DIR${NC}"
 echo -e "⚙️  Configuración actualizada: ${YELLOW}$PLUGINS_JSON${NC}"
 echo ""
 echo -e "${YELLOW}⚠️  IMPORTANTE:${NC} Reinicia Noctalia Shell para aplicar los cambios"
-echo ""
-echo ""
+
