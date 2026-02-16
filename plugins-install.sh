@@ -1,7 +1,6 @@
 #!/bin/bash
-
 # Script de instalación de plugins para Noctalia Shell
-# Plugins: Media Panel y Animated Wallpaper
+# Plugins: Media Panel, Animated Wallpaper y GIF Widget
 # Repositorio: https://github.com/mikuri12/My-lazy-plugins-for-Noctalia
 # Uso: curl -fsSL https://raw.githubusercontent.com/mikuri12/My-lazy-plugins-for-Noctalia/main/install.sh | bash
 
@@ -25,6 +24,7 @@ TEMP_DIR="/tmp/noctalia-plugins-install-$$"
 # Variables para control de instalación
 INSTALL_MEDIA_PANEL=false
 INSTALL_ANIMATED_WALLPAPER=false
+INSTALL_ANIMATED_GIFS=false
 
 clear
 echo -e "${CYAN}╔════════════════════════════════════════════╗${NC}"
@@ -110,15 +110,16 @@ show_menu() {
     echo ""
     echo -e "  ${GREEN}1)${NC} Media Panel"
     echo -e "  ${GREEN}2)${NC} Animated Wallpaper"
-    echo -e "  ${GREEN}3)${NC} Ambos plugins"
-    echo -e "  ${RED}4)${NC} Cancelar"
+    echo -e "  ${GREEN}3)${NC} GIF Widget"
+    echo -e "  ${GREEN}4)${NC} Todos los plugins"
+    echo -e "  ${RED}5)${NC} Cancelar"
     echo ""
     
     # Leer desde /dev/tty para que funcione con curl | bash
     if [ -t 0 ]; then
-        read -p "Selecciona una opción [1-4]: " choice
+        read -p "Selecciona una opción [1-5]: " choice
     else
-        read -p "Selecciona una opción [1-4]: " choice </dev/tty
+        read -p "Selecciona una opción [1-5]: " choice </dev/tty
     fi
     
     case $choice in
@@ -131,11 +132,16 @@ show_menu() {
             print_info "Se instalará: Animated Wallpaper"
             ;;
         3)
-            INSTALL_MEDIA_PANEL=true
-            INSTALL_ANIMATED_WALLPAPER=true
-            print_info "Se instalarán ambos plugins"
+            INSTALL_ANIMATED_GIFS=true
+            print_info "Se instalará: GIF Widget"
             ;;
         4)
+            INSTALL_MEDIA_PANEL=true
+            INSTALL_ANIMATED_WALLPAPER=true
+            INSTALL_ANIMATED_GIFS=true
+            print_info "Se instalarán todos los plugins"
+            ;;
+        5)
             print_info "Instalación cancelada"
             exit 0
             ;;
@@ -165,6 +171,7 @@ show_menu
 
 # Crear directorios si no existen
 print_status "Verificando directorios de Noctalia..."
+
 if [ ! -d "$NOCTALIA_CONFIG_DIR" ]; then
     print_status "Creando directorio de configuración: $NOCTALIA_CONFIG_DIR"
     mkdir -p "$NOCTALIA_CONFIG_DIR"
@@ -231,6 +238,33 @@ if [ "$INSTALL_ANIMATED_WALLPAPER" = true ]; then
     fi
 fi
 
+# Instalar GIF Widget
+if [ "$INSTALL_ANIMATED_GIFS" = true ]; then
+    print_status "Instalando GIF Widget..."
+    if [ -d "$TEMP_DIR/animated-gifs" ]; then
+        if [ -d "$NOCTALIA_PLUGINS_DIR/animated-gifs" ]; then
+            print_status "GIF Widget ya existe, actualizando..."
+            rm -rf "$NOCTALIA_PLUGINS_DIR/animated-gifs"
+        fi
+        
+        cp -r "$TEMP_DIR/animated-gifs" "$NOCTALIA_PLUGINS_DIR/"
+        
+        # Crear carpeta gifs si no existe
+        if [ ! -d "$NOCTALIA_PLUGINS_DIR/animated-gifs/gifs" ]; then
+            print_status "Creando carpeta para GIFs..."
+            mkdir -p "$NOCTALIA_PLUGINS_DIR/animated-gifs/gifs"
+            print_success "Carpeta 'gifs' creada"
+        fi
+        
+        print_success "GIF Widget instalado en: $NOCTALIA_PLUGINS_DIR/animated-gifs"
+        
+        # Actualizar plugins.json
+        update_plugins_json "animated-gifs" "true"
+    else
+        print_error "No se encontró el directorio animated-gifs en el repositorio"
+    fi
+fi
+
 # Limpiar directorio temporal
 print_status "Limpiando archivos temporales..."
 rm -rf "$TEMP_DIR"
@@ -245,4 +279,3 @@ echo -e "📁 Plugins instalados en: ${YELLOW}$NOCTALIA_PLUGINS_DIR${NC}"
 echo -e "⚙️  Configuración actualizada: ${YELLOW}$PLUGINS_JSON${NC}"
 echo ""
 echo -e "${YELLOW}⚠️  IMPORTANTE:${NC} Reinicia Noctalia Shell para aplicar los cambios"
-
