@@ -1,0 +1,21 @@
+{
+  "gifs": [
+    {
+      "id": "1771271224494",
+      "name": "mikukwa",
+      "url": "https://media.tenor.com/mxib1xgPG2MAAAAi/miku-hatsune-miku.gif",
+      "filename": "1771271224494.gif",
+      "active": true,
+      "downloaded": true
+    },
+    {
+      "id": "1771271531035",
+      "name": "mikuse",
+      "url": "https://media.tenor.com/wyceIWcakI0AAAAi/miku-hatsune.gif",
+      "filename": "1771271531035.gif",
+      "active": true,
+      "downloaded": true
+    }
+  ],
+  "tick": 3
+}
